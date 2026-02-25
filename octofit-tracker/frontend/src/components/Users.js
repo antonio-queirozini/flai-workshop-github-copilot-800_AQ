@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// API endpoint example: -8000.app.github.dev/api/users
 
 function Users() {
   const [users, setUsers] = useState([]);
