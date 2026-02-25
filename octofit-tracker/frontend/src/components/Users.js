@@ -15,15 +15,15 @@ function Users() {
   });
   const [selectedTeams, setSelectedTeams] = useState([]);
 
-  const getApiUrl = (endpoint) => {
-    const codespace = process.env.REACT_APP_CODESPACE_NAME;
-    return codespace 
-      ? `https://${codespace}-8000.app.github.dev/api/${endpoint}/`
-      : `http://localhost:8000/api/${endpoint}/`;
-  };
+  const codespace = process.env.REACT_APP_CODESPACE_NAME;
+  const baseUrl = codespace 
+    ? `https://${codespace}-8000.app.github.dev/api`
+    : 'http://localhost:8000/api';
 
   const fetchUsers = () => {
-    const apiUrl = getApiUrl('users');
+    const apiUrl = codespace 
+      ? `https://${codespace}-8000.app.github.dev/api/users/`
+      : 'http://localhost:8000/api/users/';
     console.log('Users API endpoint:', apiUrl);
 
     fetch(apiUrl)
@@ -47,7 +47,9 @@ function Users() {
   };
 
   const fetchTeams = () => {
-    const apiUrl = getApiUrl('teams');
+    const apiUrl = codespace 
+      ? `https://${codespace}-8000.app.github.dev/api/teams/`
+      : 'http://localhost:8000/api/teams/';
     fetch(apiUrl)
       .then(response => response.json())
       .then(data => {
@@ -116,7 +118,7 @@ function Users() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const apiUrl = getApiUrl(`users/${editingUser.id}`);
+    const apiUrl = `${baseUrl}/users/${editingUser.id}/`;
     
     try {
       // Use PATCH for partial updates instead of PUT
@@ -144,7 +146,7 @@ function Users() {
 
       // Update teams membership
       for (const team of teams) {
-        const teamApiUrl = getApiUrl(`teams/${team.id}`);
+        const teamApiUrl = `${baseUrl}/teams/${team.id}/`;
         const shouldBeInTeam = selectedTeams.includes(team.id);
         const isInTeam = team.members && team.members.some(member => member.id === editingUser.id);
 
