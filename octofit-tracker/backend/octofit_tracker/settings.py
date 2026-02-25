@@ -16,6 +16,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+CODESPACE_NAME = os.environ.get('CODESPACE_NAME')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -26,7 +28,18 @@ SECRET_KEY = 'django-insecure-p4hjv$33ojam#s!@(r6kqj_nnmtu!8psqg8xc)j24o@95f&)dw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if CODESPACE_NAME:
+    ALLOWED_HOSTS.append(f"{CODESPACE_NAME}-8000.app.github.dev")
+
+# Trust the forwarded HTTPS headers from GitHub Codespaces proxy
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Allow Codespace HTTPS origin for CSRF and DRF browsable API
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+if CODESPACE_NAME:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{CODESPACE_NAME}-8000.app.github.dev")
 
 
 # Application definition
